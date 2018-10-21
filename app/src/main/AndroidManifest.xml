@@ -18,6 +18,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <!--<action android:name="scos.intent.action.SCOSFOOD_VIEW"/>-->
+                <!--<category android:name="android.intent.category.DEFAULT"/>-->
             </intent-filter>
         </activity>
 
@@ -37,6 +39,28 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".FoodView">
+            <intent-filter>
+                <action android:name="scos.intent.action.SCOSFOOD_VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".FoodDetailed">
+            <intent-filter>
+                <action android:name="scos.intent.action.SCOSFOOD_DETAILED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".FoodOrderView">
+            <intent-filter>
+                <action android:name="scos.intent.action.SCOSFOOD_FOOD_ORDER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
 
     </application>
 

@@ -27,10 +27,11 @@ public class SCOSEntry extends AppCompatActivity implements View.OnTouchListener
         button_welcome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String msg = "FromEntry";
                 Intent intent = new Intent("scos.intent.action.SCOSMAIN");
                 intent.addCategory("scos.intent.category.SCOSLAUNCHER");
-                intent.putExtra("data", msg);
+                Bundle bundle = new Bundle();
+                bundle.putString(Const.BackInfo.STRINGKEY, Const.BackInfo.ENTRYFLING);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -41,6 +42,7 @@ public class SCOSEntry extends AppCompatActivity implements View.OnTouchListener
         mGestureDetector = new GestureDetector(this, new simpleGestureListener());
     }
 
+    @Override
     public boolean onTouch(View v, MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
@@ -57,10 +59,11 @@ public class SCOSEntry extends AppCompatActivity implements View.OnTouchListener
             //向左滑动
             if (e1.getX() - e2.getX() > FLING_MIN_DISTANCE
                     && Math.abs(velocityX) > FLING_MIN_VELOCITX) {
-                String msg = "FromEntry";
+                Bundle bundle = new Bundle();
                 Intent intent = new Intent("scos.intent.action.SCOSMAIN");
                 intent.addCategory("scos.intent.category.SCOSLAUNCHER");
-                intent.putExtra("data", msg);
+                bundle.putString(Const.BackInfo.STRINGKEY, Const.BackInfo.ENTRYFLING);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 Toast.makeText(SCOSEntry.this, "向左滑动", Toast.LENGTH_SHORT).show();
             }
