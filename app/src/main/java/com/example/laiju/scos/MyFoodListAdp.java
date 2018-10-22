@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.source.code.model.MyFood;
+import es.source.code.model.User;
 
 /**
  * Created by laiju on 2018/10/17.
@@ -23,13 +24,16 @@ import es.source.code.model.MyFood;
 
 
 public class MyFoodListAdp extends ArrayAdapter {
+    private User user;
+
     private final int resourceId;
     private ArrayList<MyFood> mFoods;
 
-    public MyFoodListAdp(Context context, int textViewResourceId, List<MyFood> objects) {
+    public MyFoodListAdp(Context context, int textViewResourceId, List<MyFood> objects, User user) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
         mFoods = new ArrayList<>(objects);
+        this.user = user;
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -54,35 +58,47 @@ public class MyFoodListAdp extends ArrayAdapter {
         viewHolder.foodPrice.setText("价格："+mFood.getPrice() + "元");
         viewHolder.foodPic.setImageDrawable(ContextCompat.getDrawable(getContext(),
                 mFood.getImageId()));
+        setButtonText(viewHolder.orderThis, mFood);
         viewHolder.orderThis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickOrderThis(viewHolder.orderThis);
+                clickOrderThis(viewHolder.orderThis, mFood);
             }
         });
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               clickRow(mFood, position);
+               clickRow(position);
             }
         });
         return view;
     }
 
-    public void clickOrderThis(Button orderThis) {
-        if(orderThis.getText().equals(Const.ButtonText.ORDER_THIS)) {
+    public void clickOrderThis(Button orderThis, MyFood mFood) {
+        setButtonText(orderThis, mFood);
+        if(false == mFood.getIsOrdered()) {
+            user.ortherThis(mFood, 1, "");
             orderThis.setText(Const.ButtonText.UNSUBSCRIBE);
         }
         else {
+            user.unsubscrib(mFood);
             orderThis.setText(Const.ButtonText.ORDER_THIS);
         }
     }
 
+    public void setButtonText(Button button, MyFood mFood) {
+        if(mFood.getIsOrdered())
+            button.setText(Const.ButtonText.UNSUBSCRIBE);
+        else
+            button.setText(Const.ButtonText.ORDER_THIS);
+    }
+
     //点击某行
-    public void clickRow(MyFood mFood, int pos) {
+    public void clickRow(int pos) {
         Bundle bundle = new Bundle();
         Intent intent = new Intent("scos.intent.action.SCOSFOOD_DETAILED");
         bundle.putInt(Const.BackInfo.POSITION, pos);
+        bundle.putParcelable(Const.BackInfo.USERKEY, user);
         bundle.putParcelableArrayList(Const.BackInfo.PARLIST, mFoods);
         intent.putExtras(bundle);
         getContext().startActivity(intent);

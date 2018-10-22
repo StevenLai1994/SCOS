@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import es.source.code.model.AllFoods;
 import es.source.code.model.User;
 
 /**
@@ -22,6 +23,7 @@ import es.source.code.model.User;
  */
 
 public class MainScreen extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    public User user;
     private GridView mGridView;
     List<Map<String, Object>> mData = new ArrayList<>();
 
@@ -37,17 +39,41 @@ public class MainScreen extends AppCompatActivity implements AdapterView.OnItemC
         dealIntentInfo();
     }
 
+    //接收返回的数据
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_CANCELED) {
+                    Bundle bundle;
+                    bundle = data.getExtras();
+                    user = bundle.getParcelable(Const.BackInfo.USERKEY);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String str = (String) mData.get(position).get("ItemText");
         Intent intent;
+        Bundle bundle = new Bundle();
+        if(user != null) {
+            bundle.putParcelable(Const.BackInfo.USERKEY, user);
+        }
         switch (str) {
             case Const.ButtonText.ORDER:
+                int request = 1;
                 intent = new Intent("scos.intent.action.SCOSFOOD_VIEW");
-                startActivity(intent);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, request);
                 break;
             case Const.ButtonText.VIEW:
                 intent = new Intent("scos.intent.action.SCOSFOOD_FOOD_ORDER");
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case Const.ButtonText.LOGIN:
@@ -107,11 +133,11 @@ public class MainScreen extends AppCompatActivity implements AdapterView.OnItemC
     public void dealIntentInfo() {
         Bundle bundle = getIntent().getExtras();
         String recvMsg = bundle.getString(Const.BackInfo.STRINGKEY);
-        User user;
         Toast.makeText(MainScreen.this, recvMsg, Toast.LENGTH_SHORT).show();
         switch (recvMsg) {
             case Const.BackInfo.ENTRYFLING:
-                showItem();
+                if(user == null)
+                    hideItem();
                 break;
             //登录成功
             case Const.BackInfo.LOGINLOGIN:
@@ -128,7 +154,8 @@ public class MainScreen extends AppCompatActivity implements AdapterView.OnItemC
                         Toast.LENGTH_LONG).show();
                 break;
             case Const.BackInfo.LOGINBAKE:
-                hideItem();
+                if(user == null)
+                    hideItem();
                 break;
             default:
                 break;

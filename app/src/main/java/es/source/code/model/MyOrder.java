@@ -18,6 +18,10 @@ public class MyOrder  implements Parcelable{
         this.tips = "";
     }
 
+    public MyFood getmFood() {
+        return mFood;
+    }
+
     public String getName() {
         return mFood.getName();
     }
@@ -50,12 +54,28 @@ public class MyOrder  implements Parcelable{
         this.mFood.setButtonId(buttonId);
     }
 
+    public boolean getIsOrdered() {
+        return this.mFood.getIsOrdered();
+    }
+
+    public void setOrdered(boolean ordered) {
+        this.mFood.setOrdered(ordered);
+    }
+
     public int getCount() {
         return this.count;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public String getTips() {
         return this.tips;
+    }
+
+    public void setTips(String tips) {
+        this.tips = tips;
     }
 
     @Override
@@ -76,15 +96,15 @@ public class MyOrder  implements Parcelable{
         this.tips = in.readString();
     }
 
-    public static final Parcelable.Creator<MyFood> CREATOR = new Parcelable.Creator<MyFood>() {
+    public static final Parcelable.Creator<MyOrder> CREATOR = new Parcelable.Creator<MyOrder>() {
         @Override
-        public MyFood createFromParcel(Parcel source) {
-            return new MyFood(source);
+        public MyOrder createFromParcel(Parcel source) {
+            return new MyOrder(source);
         }
 
         @Override
-        public MyFood[] newArray(int size) {
-            return new MyFood[size];
+        public MyOrder[] newArray(int size) {
+            return new MyOrder[size];
         }
     };
 }

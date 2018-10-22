@@ -12,12 +12,14 @@ public class MyFood  implements Parcelable{
     private double price;
     private int imageId;
     private int buttonId;
+    private boolean isOrdered;
 
     public MyFood(String name, double price, int imageId, int buttonId) {
         this.name = name;
         this.price = price;
         this.imageId = imageId;
         this.buttonId = buttonId;
+        this.isOrdered = false;
     }
 
     public String getName() {
@@ -52,6 +54,14 @@ public class MyFood  implements Parcelable{
         this.buttonId = buttonId;
     }
 
+    public boolean getIsOrdered() {
+        return this.isOrdered;
+    }
+
+    public void setOrdered(boolean ordered) {
+        this.isOrdered = ordered;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -63,6 +73,7 @@ public class MyFood  implements Parcelable{
         dest.writeDouble(this.price);
         dest.writeInt(this.imageId);
         dest.writeInt(this.buttonId);
+        dest.writeByte(this.isOrdered? (byte)1 : (byte)0);
     }
 
     protected MyFood(Parcel in) {
@@ -70,6 +81,7 @@ public class MyFood  implements Parcelable{
         this.price = in.readDouble();
         this.imageId = in.readInt();
         this.buttonId = in.readInt();
+        this.isOrdered = in.readByte() == 1;
     }
 
     public static final Parcelable.Creator<MyFood> CREATOR = new Parcelable.Creator<MyFood>() {

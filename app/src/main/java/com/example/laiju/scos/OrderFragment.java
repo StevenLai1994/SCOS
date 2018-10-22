@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -13,19 +14,23 @@ import java.util.List;
 
 import es.source.code.model.MyFood;
 import es.source.code.model.MyOrder;
+import es.source.code.model.User;
 
 /**
  * Created by laiju on 2018/10/17.
  */
 
 public class OrderFragment extends Fragment {
+    private User user;
     private int mPage;
     private ListView mListView;
+    private Button funcButton;
     private List<MyOrder> mOrders;
 
-    public static OrderFragment newInstance(int page) {
+    public static OrderFragment newInstance(int page, User user) {
         Bundle args = new Bundle();
         args.putInt(Const.LayoutInfo.ARGS_PAGE, page);
+        args.putParcelable(Const.BackInfo.USERKEY, user);
         OrderFragment fragment = new OrderFragment();
         fragment.setArguments(args);
         return fragment;
@@ -35,6 +40,7 @@ public class OrderFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(Const.LayoutInfo.ARGS_PAGE);
+        user = getArguments().getParcelable(Const.BackInfo.USERKEY);
         mOrders = new ArrayList<>();
     }
 
@@ -42,6 +48,8 @@ public class OrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.food_fragment, container, false);
         mListView = (ListView) rootView.findViewById(R.id.mFoodList);
+        funcButton = (Button) rootView.findViewById(R.id.order_function);
+        funcButton.setVisibility(View.VISIBLE);
         initOrder();
         initFragment();
         return rootView;
@@ -54,11 +62,11 @@ public class OrderFragment extends Fragment {
 
     public void initOrder() {
         switch(mPage) {
-            case Const.PageId.ORDERED:
-                initOrdered();
-                break;
             case Const.PageId.NO_ORDER:
                 initNoOrder();
+                break;
+            case Const.PageId.ORDERED:
+                initOrdered();
                 break;
             default:
                 break;
@@ -67,37 +75,17 @@ public class OrderFragment extends Fragment {
 
     public  void initFragment() {
         MyOrderListAdp adapter = new MyOrderListAdp(getActivity(),
-                R.layout.order_list_item, mOrders, mPage);
+                R.layout.order_list_item, mOrders, mPage, user);
         mListView.setAdapter(adapter);
     }
 
     public void initNoOrder() {
-        MyOrder order;
-        MyFood food;
-        mOrders.clear();
-        food = new MyFood("未点1", 1.1, R.drawable.main_screen, 1);
-        order = new MyOrder(food);
-        mOrders.add(order);
-        food = new MyFood("未点2", 1.1, R.drawable.main_screen, 1);
-        order = new MyOrder(food);
-        mOrders.add(order);
-        food = new MyFood("未点3", 1.1, R.drawable.main_screen, 1);
-        order = new MyOrder(food);
-        mOrders.add(order);
+        mOrders = user.mNoOrders;
+        funcButton.setText(Const.ButtonText.SUBMIT);
     }
 
     public void initOrdered() {
-        MyOrder order;
-        MyFood food;
-        mOrders.clear();
-        food = new MyFood("已点1", 1.1, R.drawable.main_screen, 1);
-        order = new MyOrder(food);
-        mOrders.add(order);
-        food = new MyFood("已点2", 1.1, R.drawable.main_screen, 1);
-        order = new MyOrder(food);
-        mOrders.add(order);
-        food = new MyFood("已点3", 1.1, R.drawable.main_screen, 1);
-        order = new MyOrder(food);
-        mOrders.add(order);
+        mOrders = user.mOrdereds;
+        funcButton.setText(Const.ButtonText.SETTLE);
     }
 }

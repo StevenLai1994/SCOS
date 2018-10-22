@@ -12,9 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import es.source.code.model.MyFood;
 import es.source.code.model.MyOrder;
+import es.source.code.model.User;
 
 /**
  * Created by laiju on 2018/10/17.
@@ -22,14 +25,18 @@ import es.source.code.model.MyOrder;
 
 
 public class MyOrderListAdp extends ArrayAdapter {
+    private User user;
     private final int resourceId;
     private final int mPage;
+    private ArrayList<MyOrder> mOrders;
 
     public MyOrderListAdp(Context context, int textViewResourceId,
-                          List<MyOrder> objects, int mPage) {
+                          List<MyOrder> objects, int mPage, User user) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
+        mOrders = new ArrayList<>(objects);
         this.mPage = mPage;
+        this.user = user;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -67,12 +74,12 @@ public class MyOrderListAdp extends ArrayAdapter {
     }
 
     class ViewHolder {
-        ImageView foodPic;
-        TextView foodName;
-        TextView foodPrice;
-        TextView orderCount;
-        TextView orderTips;
-        Button orderThis;
+        private ImageView foodPic;
+        private TextView foodName;
+        private TextView foodPrice;
+        private TextView orderCount;
+        private TextView orderTips;
+        private Button orderThis;
 
         public  ViewHolder(View view) {
             //获取每一行控件位置
@@ -84,7 +91,7 @@ public class MyOrderListAdp extends ArrayAdapter {
             this.orderThis = (Button) view.findViewById(R.id.order_this);
         }
 
-        public void setViews(MyOrder mOrder, int mPage) {
+        public void setViews(final MyOrder mOrder, int mPage) {
             foodPic.setImageDrawable(ContextCompat.getDrawable(getContext(),
                     mOrder.getImageId()));
             foodName.setText(mOrder.getName());//为文本视图设置文本内容
@@ -97,18 +104,29 @@ public class MyOrderListAdp extends ArrayAdapter {
                 orderThis.setVisibility(View.GONE);
                 return;
             }
-            orderThis.setText(Const.ButtonText.UNSUBSCRIBE);
+            setButtonText(orderThis, mOrder);
             orderThis.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(orderThis.getText().equals(Const.ButtonText.ORDER_THIS)) {
+                    setButtonText(orderThis, mOrder);
+                    if(false == mOrder.getIsOrdered()) {
+                        user.ortherThis(mOrder.getmFood(), 1, "");
                         orderThis.setText(Const.ButtonText.UNSUBSCRIBE);
                     }
                     else {
+                        user.unsubscrib(mOrder.getmFood());
                         orderThis.setText(Const.ButtonText.ORDER_THIS);
                     }
                 }
             });
         }
+
+        public void setButtonText(Button button, MyOrder mOrder) {
+            if(mOrder.getIsOrdered())
+                button.setText(Const.ButtonText.UNSUBSCRIBE);
+            else
+                button.setText(Const.ButtonText.ORDER_THIS);
+        }
+
     }
 }

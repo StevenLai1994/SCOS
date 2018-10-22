@@ -15,12 +15,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import es.source.code.model.MyFood;
+import es.source.code.model.User;
 
 /**
  * Created by laiju on 2018/10/18.
  */
 
 public class FoodDetailed extends AppCompatActivity implements View.OnTouchListener {
+    private User user;
     private GestureDetector mGestureDetector;
     private LinearLayout mLayout;
     private MyFood mFood;
@@ -53,25 +55,38 @@ public class FoodDetailed extends AppCompatActivity implements View.OnTouchListe
         mFood = mFoods.get(pos);
         foodName.setText(mFood.getName());
         foodPrice.setText("价格："+mFood.getPrice() + "元");
-        orderThis.setText(Const.ButtonText.ORDER_THIS);
+        setButtonText(orderThis, mFood);
         foodPic.setImageDrawable(ContextCompat.getDrawable(this,
                 mFood.getImageId()));
         orderThis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(orderThis.getText().equals(Const.ButtonText.ORDER_THIS)) {
+                setButtonText(orderThis, mFood);
+                if(mFood.getIsOrdered() == false) {
+                    user.ortherThis(mFood, 1, tips.getText().toString());
+                    mFood.setOrdered(true);
                     orderThis.setText(Const.ButtonText.UNSUBSCRIBE);
                 }
                 else {
+                    user.unsubscrib(mFood);
+                    mFood.setOrdered(false);
                     orderThis.setText(Const.ButtonText.ORDER_THIS);
                 }
             }
         });
     }
 
+    public void setButtonText(Button button, MyFood mFood) {
+        if(mFood.getIsOrdered())
+            button.setText(Const.ButtonText.UNSUBSCRIBE);
+        else
+            button.setText(Const.ButtonText.ORDER_THIS);
+    }
+
     public void getData() {
         Bundle bundle = getIntent().getExtras();
         position = bundle.getInt(Const.BackInfo.POSITION);
+        user = bundle.getParcelable(Const.BackInfo.USERKEY);
         mFoods = bundle.getParcelableArrayList(Const.BackInfo.PARLIST);
         mFood = mFoods.get(position);
     }

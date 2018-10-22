@@ -11,20 +11,24 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.source.code.model.AllFoods;
 import es.source.code.model.MyFood;
+import es.source.code.model.User;
 
 /**
  * Created by laiju on 2018/10/17.
  */
 
 public class FoodFragment extends Fragment {
+    private User user;
     private int mPage;
     private ListView mListView;
     private List<MyFood> mFoods;
 
-    public static FoodFragment newInstance(int page) {
+    public static FoodFragment newInstance(int page, User user) {
         Bundle args = new Bundle();
         args.putInt(Const.LayoutInfo.ARGS_PAGE, page);
+        args.putParcelable(Const.BackInfo.USERKEY, user);
         FoodFragment fragment = new FoodFragment();
         fragment.setArguments(args);
         return fragment;
@@ -34,7 +38,7 @@ public class FoodFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(Const.LayoutInfo.ARGS_PAGE);
-        mFoods = new ArrayList<>();
+        user = getArguments().getParcelable(Const.BackInfo.USERKEY);
     }
 
     @Override
@@ -51,71 +55,27 @@ public class FoodFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    public  void initFragment() {
+        MyFoodListAdp adapter = new MyFoodListAdp(getActivity(), R.layout.list_item, mFoods, user);
+        mListView.setAdapter(adapter);
+    }
+
     public void initFood() {
         switch(mPage) {
             case Const.PageId.COLDFOOD:
-                initColdFood();
+                mFoods = user.getColdFoods();
                 break;
             case Const.PageId.HOTFOOD:
-                initHotFood();
+                mFoods = user.getHotFoods();
                 break;
             case Const.PageId.SEAFOOD:
-                initSeaFood();
+                mFoods = user.getSeaFoods();
                 break;
             case Const.PageId.DRINKING:
-                initDrinking();
+                mFoods = user.getDrinkings();
                 break;
             default:
                 break;
         }
-    }
-
-    public  void initFragment() {
-        MyFoodListAdp adapter = new MyFoodListAdp(getActivity(), R.layout.list_item, mFoods);
-        mListView.setAdapter(adapter);
-    }
-
-    public void initColdFood() {
-        mFoods.clear();
-        MyFood food;
-        food = new MyFood("冷菜1", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("冷菜2", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("冷菜3", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-    }
-
-    public void initHotFood() {
-        mFoods.clear();
-        MyFood food;
-        food = new MyFood("热菜1", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("热菜2", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("热菜3", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-    }
-
-    public void initSeaFood() {
-        mFoods.clear();
-        MyFood food;
-        food = new MyFood("海鲜1", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("海鲜2", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("海鲜3", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-    }
-
-    public void initDrinking() {
-        mFoods.clear();
-        MyFood food;
-        food = new MyFood("酒水", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("酒水", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
-        food = new MyFood("酒水", 1.1, R.drawable.main_screen, 1);
-        mFoods.add(food);
     }
 }

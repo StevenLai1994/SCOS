@@ -38,7 +38,8 @@ public class Const {
         public static final String LOGINBAKE = "Return";
         public static final String LOGINREGISTER = "RigisterSuccess";
         public static final String POSITION = "Position";
-        public static final String PARLIST = "PARLIST";
+        public static final String PARLIST = "Parlist";
+        public static final String AllFOODS = "AllFood";
     }
 
     public static class LayoutInfo {

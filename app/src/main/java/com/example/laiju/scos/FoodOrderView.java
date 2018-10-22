@@ -11,13 +11,17 @@ import android.support.design.widget.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.source.code.model.User;
+
 /**
  * Created by laiju on 2018/10/17.
  */
 
 public class FoodOrderView extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
+    private User user;
     private TabLayout mTabL;
     private ViewPager mFoodVP;
+    private int initPagePos;
     private List<String> mTabs = new ArrayList<>();
     private List<Fragment> mFoodsFragments = new ArrayList<>();
     private MyPagerAdapter mAdapter;
@@ -29,10 +33,11 @@ public class FoodOrderView extends AppCompatActivity implements TabLayout.OnTabS
 
         mTabL = (TabLayout) findViewById(R.id.morder_tablayout);
         mFoodVP = (ViewPager) findViewById(R.id.morder_foodvp);
-
+        Bundle bundle = getIntent().getExtras();
+        initPagePos = bundle.getInt(Const.BackInfo.POSITION);
+        user = bundle.getParcelable(Const.BackInfo.USERKEY);
         initTabs();
         initViews();
-
     }
 
     private void initTabs() {
@@ -46,13 +51,14 @@ public class FoodOrderView extends AppCompatActivity implements TabLayout.OnTabS
             mTabL.addTab(mTabL.newTab().setText(tab));
         }
         for (int i = 0; i < 2; i++) {
-            mFoodsFragments.add(OrderFragment.newInstance(i));
+            mFoodsFragments.add(OrderFragment.newInstance(i, user));
         }
         //设置TabLayout点击事件
         mTabL.addOnTabSelectedListener(this);
         mAdapter = new MyPagerAdapter(getSupportFragmentManager(), mTabs, mFoodsFragments);
         mFoodVP.setAdapter(mAdapter);
         mTabL.setupWithViewPager(mFoodVP);
+        mFoodVP.setCurrentItem(initPagePos);
     }
 
     //pageView点击事件

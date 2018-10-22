@@ -1,5 +1,6 @@
 package com.example.laiju.scos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,16 +16,22 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.source.code.model.AllFoods;
+import es.source.code.model.MyFood;
+import es.source.code.model.User;
+
 /**
  * Created by laiju on 2018/10/17.
  */
 
 public class FoodView extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
+    private User user;
     private TabLayout mTabL;
     private ViewPager mFoodVP;
     private List<String> mTabs = new ArrayList<>();
     private List<Fragment> mFoodsFragments = new ArrayList<>();
     private MyPagerAdapter mAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,10 @@ public class FoodView extends AppCompatActivity implements TabLayout.OnTabSelect
         mTabL = (TabLayout) findViewById(R.id.mtablayout);
         mFoodVP = (ViewPager) findViewById(R.id.mfoodvp);
 
+        Bundle bundle = getIntent().getExtras();
+        user = bundle.getParcelable(Const.BackInfo.USERKEY);
+
+        initAllFood();
         initTabs();
         initViews();
 
@@ -54,7 +65,7 @@ public class FoodView extends AppCompatActivity implements TabLayout.OnTabSelect
         }
         //设置TabLayout点击事件
         for (int i = 0; i < 4; i++) {
-            mFoodsFragments.add(FoodFragment.newInstance(i));
+            mFoodsFragments.add(FoodFragment.newInstance(i, user));
         }
         mTabL.addOnTabSelectedListener(this);
         mAdapter = new MyPagerAdapter(getSupportFragmentManager(), mTabs, mFoodsFragments);
@@ -78,14 +89,26 @@ public class FoodView extends AppCompatActivity implements TabLayout.OnTabSelect
         return super.onCreateOptionsMenu(menu);
     }
 
+
+    //菜单点击事件
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        Bundle bundle = new Bundle();
         switch (item.getItemId()) {
             case R.id.ordered:
-                Toast.makeText(this, "已点菜品", Toast.LENGTH_LONG).show();
+                intent = new Intent("scos.intent.action.SCOSFOOD_FOOD_ORDER");
+                bundle.putInt(Const.BackInfo.POSITION, Const.PageId.NO_ORDER);
+                bundle.putParcelable(Const.BackInfo.USERKEY, user);
+                intent.putExtras(bundle);
+                startActivity(intent);
                 break;
             case R.id.view_order:
-                Toast.makeText(this, "查看订单", Toast.LENGTH_LONG).show();
+                intent = new Intent("scos.intent.action.SCOSFOOD_FOOD_ORDER");
+                bundle.putInt(Const.BackInfo.POSITION, Const.PageId.ORDERED);
+                bundle.putParcelable(Const.BackInfo.USERKEY, user);
+                intent.putExtras(bundle);
+                startActivity(intent);
                 break;
             case R.id.help:
                 Toast.makeText(this, "帮助", Toast.LENGTH_LONG).show();
@@ -94,6 +117,16 @@ public class FoodView extends AppCompatActivity implements TabLayout.OnTabSelect
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Bundle bundle = new Bundle();
+        Intent intent = new Intent();
+        bundle.putParcelable(Const.BackInfo.USERKEY, user);
+        intent.putExtras(bundle);
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
 
 
@@ -109,6 +142,36 @@ public class FoodView extends AppCompatActivity implements TabLayout.OnTabSelect
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    public void initAllFood() {
+        if(user.getInitAllFoods() == true)
+            return;
+        user.initAllFoods();
+        initColdFood();
+        initHotFood();
+        initSeaFood();
+        initDrinking();
+    }
+    public void initColdFood() {
+        user.addColdFood("冷菜1", 1.1, R.drawable.main_screen, 1);
+        user.addColdFood("冷菜2", 1.1, R.drawable.main_screen, 1);
+        user.addColdFood("冷菜3", 1.1, R.drawable.main_screen, 1);
+    }
+    public void initHotFood() {
+        user.addHotFood("热菜1", 1.1, R.drawable.main_screen, 1);
+        user.addHotFood("热菜2", 1.1, R.drawable.main_screen, 1);
+        user.addHotFood("热菜3", 1.1, R.drawable.main_screen, 1);
+    }
+    public void initSeaFood() {
+        user.addSeaFood("海鲜1", 1.1, R.drawable.main_screen, 1);
+        user.addSeaFood("海鲜2", 1.1, R.drawable.main_screen, 1);
+        user.addSeaFood("海鲜3", 1.1, R.drawable.main_screen, 1);
+    }
+    public void initDrinking() {
+        user.addDrinking("酒水1", 1.1, R.drawable.main_screen, 1);
+        user.addDrinking("酒水2", 1.1, R.drawable.main_screen, 1);
+        user.addDrinking("酒水3", 1.1, R.drawable.main_screen, 1);
     }
 
     //pageView适配器
